@@ -30,6 +30,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
 }
 
 .forge__header {
@@ -155,13 +156,22 @@ body {
   display: flex;
   gap: 10px;
   align-items: center;
+  width: 100%;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 10px;
   border: 2px solid var(--block-color);
   background: color-mix(in srgb, var(--block-color) 12%, var(--bg-panel));
+  color: var(--text);
+  font-family: inherit;
+  text-align: left;
   cursor: grab;
   transition: transform 0.15s ease;
+}
+
+.palette__text {
+  display: flex;
+  flex-direction: column;
 }
 
 .palette__item:hover {
@@ -370,4 +380,77 @@ body {
   color: #1b140f;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* Mobile : palette en bandeau, config en tiroir bas, tout l'espace restant
+   au canvas — à largeur fixe les deux panneaux ne lui laissaient rien. */
+
+@media (max-width: 860px) {
+  .forge__header {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+
+  .forge__header h1 {
+    font-size: 1.1rem;
+  }
+
+  .forge__header p {
+    display: none;
+  }
+
+  .forge__export {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+  }
+
+  .forge__body {
+    flex-direction: column;
+  }
+
+  .palette {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    overflow-x: auto;
+    padding: 10px 16px;
+    border-right: none;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .palette__title,
+  .palette__hint,
+  .palette__tagline {
+    display: none;
+  }
+
+  .palette__item {
+    width: auto;
+    flex: 0 0 auto;
+    margin-bottom: 0;
+    white-space: nowrap;
+  }
+
+  .forge__canvas {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* La minimap masquerait une bonne part d'un canvas déjà étroit. */
+  .react-flow__minimap {
+    display: none;
+  }
+
+  .config-panel {
+    width: 100%;
+    max-height: 45vh;
+    padding: 14px 16px;
+    border-left: none;
+    border-top: 2px solid var(--border);
+  }
+
+  .config-panel--empty {
+    display: none;
+  }
 }
