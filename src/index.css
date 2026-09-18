@@ -190,10 +190,99 @@ body {
   stroke: var(--amber);
 }
 
-/* Main au bout d'un bras : posée aux coordonnées calculées par le robot. */
-.hand {
+/* Yeux dessinés plutôt qu'une émoticône : ça doit avoir l'air d'un robot. */
+.eye {
+  fill: #150f0a;
+  stroke: var(--off);
+  stroke-width: 2.5;
+}
+
+.eye__pupil {
+  fill: var(--off);
+}
+
+.robot.is-awake .eye {
+  fill: #3a2a12;
+  stroke: var(--amber);
+}
+
+.robot.is-awake .eye__pupil {
+  fill: var(--amber);
+}
+
+.eyes,
+.grip {
+  cursor: pointer;
+}
+
+.eyes.is-selected .eye,
+.grip.is-selected .grip__palm {
+  stroke: #fff;
+  stroke-width: 3;
+}
+
+/* Main : une paume, et un doigt qui se referme par-dessus l'outil. */
+.grip__palm {
+  fill: #4a3a2c;
+  stroke: var(--off);
+  stroke-width: 2.5;
+}
+
+.robot.is-awake .grip__palm {
+  fill: #6b5030;
+  stroke: var(--amber);
+}
+
+.grip__tool {
+  font-size: 25px;
+}
+
+.grip__knuckle {
+  stroke: var(--off);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.robot.is-awake .grip__knuckle {
+  stroke: var(--amber);
+  opacity: 0.7;
+}
+
+/* Cerveau posé dans la tête, avec le modèle écrit dessus. */
+.brain {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.brain__icon {
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.brain__model {
   position: absolute;
-  transform: translate(-50%, -50%);
+  bottom: 1px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(18, 13, 9, 0.82);
+  color: var(--amber);
+  font-size: 0.56rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.brain.is-selected {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 12px;
 }
 
 .robot__art {
@@ -328,35 +417,42 @@ body {
 /* Coordonnées en % de la boîte du robot, calées sur le viewBox 300x320. */
 
 .zone--head {
-  left: 37.3%;
-  top: 11.3%;
-  width: 25.4%;
-  height: 13.1%;
+  left: 36%;
+  top: 9.7%;
+  width: 28%;
+  height: 16.3%;
 }
 
 .zone--face {
   left: 35.3%;
-  top: 26.6%;
+  top: 27.8%;
   width: 29.4%;
   height: 9.4%;
 }
 
-.zone--torso {
-  left: 32%;
-  top: 42.5%;
-  width: 36%;
-  height: 27.5%;
+/* Les yeux sont dessinés dans le SVG : une fois posés, la zone s'efface
+   pour ne pas encadrer le visage. */
+.zone--face.is-filled {
   border-color: transparent;
   background: none;
 }
 
-.zone--books {
-  left: 3%;
-  top: 79%;
-  width: 29%;
-  height: 11%;
-  flex-wrap: nowrap;
-  overflow-x: auto;
+.zone--shoulders {
+  left: 32%;
+  top: 44.4%;
+  width: 36%;
+  height: 8.8%;
+  border-color: transparent;
+  background: none;
+}
+
+.zone--chest {
+  left: 35.3%;
+  top: 55%;
+  width: 29.4%;
+  height: 15%;
+  flex-wrap: wrap;
+  overflow-y: auto;
 }
 
 .equipped {
@@ -369,29 +465,9 @@ body {
   border-radius: 6px;
 }
 
-.zone--head .equipped {
-  font-size: 2.1rem;
-}
-
-.zone--face .equipped {
-  font-size: 1.3rem;
-}
-
-.equipped--hand {
-  font-size: 1.7rem;
-  padding: 5px;
-  border-radius: 50%;
-  background: #2c231b;
-  border: 2px solid var(--off);
-}
-
-.robot.is-awake .equipped--hand {
-  border-color: var(--amber);
-}
-
 .equipped.is-selected {
-  outline: 2px solid var(--amber);
-  outline-offset: 2px;
+  outline: 2px solid #fff;
+  outline-offset: 1px;
 }
 
 /* Panneau de réglage */

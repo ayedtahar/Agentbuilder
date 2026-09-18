@@ -2,7 +2,7 @@
 
 On équipe un robot pour en faire un agent IA : on attrape un cerveau et on
 le pose dans sa tête, des yeux sur son visage, des outils qui lui font
-pousser des bras, des livres sous sa main — puis on exporte la
+pousser des bras, des livres sur son torse — puis on exporte la
 configuration en JSON.
 
 C'est un **prototype visuel** : l'assemblage produit une config d'agent,
@@ -25,10 +25,10 @@ revient à sa place.
 
 | Objet | Où il va | Effet |
 |---|---|---|
-| 🧠 **Cerveau** | sa tête | le robot s'allume, son écran affiche le modèle |
-| 👀 **Skill** | son visage | une paire d'yeux de plus sur la face |
-| 🔧 **Outil** | son torse | **un bras pousse** pour tenir l'outil |
-| 📚 **RAG** | sous sa main | les livres s'empilent à portée |
+| 🧠 **Cerveau** | sa tête | le robot s'allume, le modèle est écrit sur le cerveau |
+| 👀 **Skill** | son visage | une paire d'yeux de plus, dessinés sur la face |
+| 🔨 **Outil** | ses épaules | **un bras pousse** et un poing se referme sur l'outil |
+| 📚 **RAG** | son torse | les livres s'empilent sur sa poitrine |
 
 Les bras poussent par paires étagées : le premier outil donne un bras à
 gauche, le deuxième un bras à droite, et ainsi de suite en descendant le
