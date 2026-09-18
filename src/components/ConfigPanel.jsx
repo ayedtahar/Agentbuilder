@@ -1,44 +1,40 @@
-import { BLOCK_TYPES } from '../blockLibrary';
-
-export default function ConfigPanel({ node, onChange, onDelete }) {
-  if (!node) {
+export default function ConfigPanel({ item, fields, icon, onChange, onRemove }) {
+  if (!item) {
     return (
-      <aside className="config-panel config-panel--empty">
-        <p>Clique un bloc sur l’établi pour le configurer.</p>
+      <aside className="config config--empty">
+        <p>Clique un objet posé sur le robot pour le régler.</p>
       </aside>
     );
   }
 
-  const meta = BLOCK_TYPES[node.type];
-
   return (
-    <aside className="config-panel">
-      <div className="config-panel__header" style={{ '--block-color': meta.color }}>
-        <span>{meta.icon}</span>
-        <span>{meta.label}</span>
+    <aside className="config">
+      <div className="config__header">
+        <span className="config__icon">{icon}</span>
+        <span>{item.label}</span>
       </div>
 
-      {meta.fields.map((field) => (
-        <label key={field.key} className="config-field">
-          <span className="config-field__label">{field.label}</span>
+      {fields.map((field) => (
+        <label key={field.key} className="field">
+          <span className="field__label">{field.label}</span>
           {field.type === 'textarea' && (
             <textarea
               rows={3}
-              value={node.data[field.key] ?? ''}
-              onChange={(e) => onChange(node.id, field.key, e.target.value)}
+              value={item[field.key] ?? ''}
+              onChange={(e) => onChange(field.key, e.target.value)}
             />
           )}
           {field.type === 'text' && (
             <input
               type="text"
-              value={node.data[field.key] ?? ''}
-              onChange={(e) => onChange(node.id, field.key, e.target.value)}
+              value={item[field.key] ?? ''}
+              onChange={(e) => onChange(field.key, e.target.value)}
             />
           )}
           {field.type === 'select' && (
             <select
-              value={node.data[field.key] ?? ''}
-              onChange={(e) => onChange(node.id, field.key, e.target.value)}
+              value={item[field.key] ?? ''}
+              onChange={(e) => onChange(field.key, e.target.value)}
             >
               {field.options.map((opt) => (
                 <option key={opt} value={opt}>
@@ -48,26 +44,24 @@ export default function ConfigPanel({ node, onChange, onDelete }) {
             </select>
           )}
           {field.type === 'range' && (
-            <div className="config-field__range">
+            <div className="field__range">
               <input
                 type="range"
                 min={field.min}
                 max={field.max}
                 step={field.step}
-                value={node.data[field.key] ?? field.min}
-                onChange={(e) => onChange(node.id, field.key, Number(e.target.value))}
+                value={item[field.key] ?? field.min}
+                onChange={(e) => onChange(field.key, Number(e.target.value))}
               />
-              <span>{node.data[field.key]}</span>
+              <span>{item[field.key]}</span>
             </div>
           )}
         </label>
       ))}
 
-      {node.type !== 'agent' && (
-        <button type="button" className="config-panel__delete" onClick={() => onDelete(node.id)}>
-          🗑️ Retirer ce bloc
-        </button>
-      )}
+      <button type="button" className="config__remove" onClick={onRemove}>
+        🗑️ Retirer du robot
+      </button>
     </aside>
   );
 }
