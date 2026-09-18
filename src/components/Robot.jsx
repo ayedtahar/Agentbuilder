@@ -1,18 +1,41 @@
 import { OBJECTS_BY_ID } from '../catalog';
 
-// Chaque emplacement est une zone HTML posée sur le dessin : c'est elle qui
-// reçoit l'objet lâché et qui affiche ce qui s'y trouve.
+const VIEW = { w: 300, h: 320 };
+
+const SHOULDER_Y = 152;
+const ARM_LENGTH = 56;
+
+// Les bras poussent par paires en éventail : un outil de plus, un bras de
+// plus, alterné à gauche puis à droite et abaissé d'un cran à chaque tour.
+function armGeometry(index) {
+  const side = index % 2 === 0 ? -1 : 1;
+  const tier = Math.floor(index / 2);
+  const angle = ((14 + tier * 26) * Math.PI) / 180;
+  const shoulderX = 150 + side * 54;
+  // Chaque étage s'accroche plus bas sur le flanc : partis d'un même point,
+  // les bras formaient un bouquet au lieu d'une paire de plus.
+  const shoulderY = SHOULDER_Y + tier * 18;
+  return {
+    shoulderX,
+    shoulderY,
+    handX: shoulderX + side * ARM_LENGTH * Math.cos(angle),
+    handY: shoulderY + ARM_LENGTH * Math.sin(angle),
+  };
+}
+
+const pct = (value, total) => `${(value / total) * 100}%`;
+
 function Zone({ slot, className, dragSlot, hoverSlot, filled, children }) {
-  // Attraper un objet allume tous ses emplacements possibles ; celui sous le
-  // doigt s'allume plus fort.
   const target = dragSlot === slot;
   const classes = [
     'zone',
     className,
-    target ? ' is-target' : '',
-    target && hoverSlot === slot ? ' is-active' : '',
-    filled ? ' is-filled' : '',
-  ].join(' ');
+    target ? 'is-target' : '',
+    target && hoverSlot === slot ? 'is-active' : '',
+    filled ? 'is-filled' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className={classes} data-slot={slot}>
@@ -21,61 +44,66 @@ function Zone({ slot, className, dragSlot, hoverSlot, filled, children }) {
   );
 }
 
-function Equipped({ item, selected, onSelect }) {
-  const object = OBJECTS_BY_ID[item.objectId];
+function Equipped({ item, selected, onSelect, className = '' }) {
   return (
     <button
       type="button"
-      className={`equipped${selected ? ' is-selected' : ''}`}
+      className={`equipped ${className}${selected ? ' is-selected' : ''}`}
       title={item.label}
       onClick={(e) => {
         e.stopPropagation();
         onSelect(item.uid);
       }}
     >
-      {object.icon}
+      {OBJECTS_BY_ID[item.objectId].icon}
     </button>
   );
 }
 
 export default function Robot({
   brain,
-  tools,
   skills,
+  tools,
+  rags,
   dragSlot,
   hoverSlot,
   selectedUid,
   onSelect,
 }) {
   const awake = Boolean(brain);
-  const hands = [tools[0], tools[1]];
-  const belt = tools.slice(2);
+  const arms = tools.map((tool, i) => ({ tool, ...armGeometry(i) }));
 
   return (
     <div className={`robot${awake ? ' is-awake' : ''}`}>
-      <svg className="robot__art" viewBox="0 0 220 300" aria-hidden="true">
-        <circle className="robot__bulb" cx="110" cy="10" r="7" />
-        <line className="robot__wire" x1="110" y1="17" x2="110" y2="28" />
+      <svg className="robot__art" viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} aria-hidden="true">
+        <circle className="robot__bulb" cx="150" cy="14" r="7" />
+        <line className="robot__wire" x1="150" y1="21" x2="150" y2="32" />
 
-        <rect className="robot__shell" x="58" y="26" width="104" height="100" rx="22" />
-        <circle className="robot__eye" cx="86" cy="102" r="9" />
-        <circle className="robot__eye" cx="134" cy="102" r="9" />
-        <rect className="robot__mouth" x="95" y="113" width="30" height="5" rx="2.5" />
+        {/* Bras : un par outil, dessiné avant le torse pour s'y enfoncer */}
+        {arms.map(({ shoulderX, shoulderY, handX, handY }, i) => (
+          <line
+            key={i}
+            className="robot__arm"
+            x1={shoulderX}
+            y1={shoulderY}
+            x2={handX}
+            y2={handY}
+          />
+        ))}
 
-        <rect className="robot__shell" x="101" y="126" width="18" height="10" />
-        <rect className="robot__shell" x="56" y="134" width="108" height="86" rx="16" />
-        <rect className="robot__screen" x="66" y="146" width="88" height="30" rx="8" />
-        <text className="robot__screen-text" x="110" y="166" textAnchor="middle">
+        <rect className="robot__shell" x="100" y="30" width="100" height="96" rx="22" />
+        <rect className="robot__mouth" x="135" y="116" width="30" height="5" rx="2.5" />
+        <rect className="robot__shell" x="141" y="126" width="18" height="10" />
+        <rect className="robot__shell" x="96" y="136" width="108" height="88" rx="16" />
+        <rect className="robot__screen" x="106" y="150" width="88" height="30" rx="8" />
+        <text className="robot__screen-text" x="150" y="170" textAnchor="middle">
           {awake ? brain.model : 'hors ligne'}
         </text>
 
-        <rect className="robot__shell" x="36" y="142" width="16" height="46" rx="8" />
-        <rect className="robot__shell" x="168" y="142" width="16" height="46" rx="8" />
-
-        <rect className="robot__shell" x="78" y="220" width="18" height="28" rx="6" />
-        <rect className="robot__shell" x="124" y="220" width="18" height="28" rx="6" />
-        <rect className="robot__shell" x="68" y="246" width="38" height="12" rx="5" />
-        <rect className="robot__shell" x="114" y="246" width="38" height="12" rx="5" />
+        <rect className="robot__shell" x="118" y="224" width="18" height="28" rx="6" />
+        <rect className="robot__shell" x="164" y="224" width="18" height="28" rx="6" />
+        <rect className="robot__shell" x="108" y="250" width="38" height="12" rx="5" />
+        <rect className="robot__shell" x="154" y="250" width="38" height="12" rx="5" />
       </svg>
 
       <Zone
@@ -92,55 +120,62 @@ export default function Robot({
         )}
       </Zone>
 
-      {hands.map((tool, i) => (
-        <Zone
-          key={i}
-          slot="tool"
-          className={i === 0 ? 'zone--hand-left' : 'zone--hand-right'}
-          dragSlot={dragSlot}
-          hoverSlot={hoverSlot}
-          filled={Boolean(tool)}
-        >
-          {tool && (
-            <Equipped item={tool} selected={selectedUid === tool.uid} onSelect={onSelect} />
-          )}
-        </Zone>
-      ))}
-
-      {/* La ceinture ne sert qu'au-delà de deux mains : inutile de laisser un
-          rectangle vide sur le torse le reste du temps. */}
-      {(belt.length > 0 || dragSlot === 'tool') && (
-        <Zone
-          slot="tool"
-          className="zone--belt"
-          dragSlot={dragSlot}
-          hoverSlot={hoverSlot}
-          filled={belt.length > 0}
-        >
-          {belt.map((tool) => (
-            <Equipped
-              key={tool.uid}
-              item={tool}
-              selected={selectedUid === tool.uid}
-              onSelect={onSelect}
-            />
-          ))}
-        </Zone>
-      )}
-
       <Zone
-        slot="memory"
-        className="zone--memory"
+        slot="skill"
+        className="zone--face"
         dragSlot={dragSlot}
         hoverSlot={hoverSlot}
         filled={skills.length > 0}
       >
-        {skills.length === 0 && <span className="zone__empty zone__empty--faint">mémoire</span>}
         {skills.map((skill) => (
           <Equipped
             key={skill.uid}
             item={skill}
             selected={selectedUid === skill.uid}
+            onSelect={onSelect}
+          />
+        ))}
+      </Zone>
+
+      {/* Le torse reçoit les outils : c'est là que pousse le bras. */}
+      <Zone
+        slot="tool"
+        className="zone--torso"
+        dragSlot={dragSlot}
+        hoverSlot={hoverSlot}
+        filled={false}
+      >
+        {dragSlot === 'tool' && <span className="zone__empty zone__empty--faint">+ un bras</span>}
+      </Zone>
+
+      {arms.map(({ tool, handX, handY }) => (
+        <div
+          key={tool.uid}
+          className="hand"
+          style={{ left: pct(handX, VIEW.w), top: pct(handY, VIEW.h) }}
+        >
+          <Equipped
+            item={tool}
+            selected={selectedUid === tool.uid}
+            onSelect={onSelect}
+            className="equipped--hand"
+          />
+        </div>
+      ))}
+
+      <Zone
+        slot="rag"
+        className="zone--books"
+        dragSlot={dragSlot}
+        hoverSlot={hoverSlot}
+        filled={rags.length > 0}
+      >
+        {rags.length === 0 && <span className="zone__empty zone__empty--faint">RAG</span>}
+        {rags.map((rag) => (
+          <Equipped
+            key={rag.uid}
+            item={rag}
+            selected={selectedUid === rag.uid}
             onSelect={onSelect}
           />
         ))}
