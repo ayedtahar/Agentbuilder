@@ -80,52 +80,31 @@ body {
   min-height: 0;
 }
 
-/* Palette */
+/* Palette en bandeau haut */
 
 .palette {
-  width: 210px;
-  flex: 0 0 auto;
-  padding: 14px;
-  border-right: 2px solid var(--border);
-  background: var(--bg-panel);
-  overflow-y: auto;
-}
-
-.palette__group + .palette__group {
-  margin-top: 18px;
-}
-
-.palette__title {
-  margin: 0 0 8px;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--amber);
-}
-
-.palette__title span {
-  color: var(--text-dim);
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-.palette__objects {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--border);
+  background: var(--bg-panel);
+  overflow-x: auto;
 }
 
 .object {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  width: 78px;
-  padding: 8px 4px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  background: none;
-  color: var(--text-dim);
+  gap: 1px;
+  flex: 0 0 auto;
+  width: 104px;
+  padding: 8px 6px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #1d150e;
+  color: var(--text);
   font: inherit;
   cursor: grab;
   /* Sans ça le navigateur défile au lieu de laisser traîner l'objet. */
@@ -133,19 +112,27 @@ body {
 }
 
 .object:hover {
-  border-color: var(--border);
-  background: rgba(251, 191, 36, 0.07);
+  border-color: var(--amber);
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.object:active {
+  cursor: grabbing;
 }
 
 .object__icon {
-  font-size: 2rem;
+  font-size: 2.1rem;
   line-height: 1;
 }
 
 .object__label {
-  font-size: 0.66rem;
-  text-align: center;
-  line-height: 1.2;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.object__hint {
+  font-size: 0.64rem;
+  color: var(--text-dim);
 }
 
 /* Objet qui suit le doigt / la souris pendant le geste */
@@ -187,10 +174,26 @@ body {
    tiroir de réglages s'ouvre, pas la largeur. */
 .robot {
   position: relative;
-  height: min(420px, 100%);
-  aspect-ratio: 220 / 300;
+  height: min(430px, 100%);
+  aspect-ratio: 300 / 320;
   max-width: 100%;
   flex: 0 1 auto;
+}
+
+.robot__arm {
+  stroke: var(--off);
+  stroke-width: 13;
+  stroke-linecap: round;
+}
+
+.robot.is-awake .robot__arm {
+  stroke: var(--amber);
+}
+
+/* Main au bout d'un bras : posée aux coordonnées calculées par le robot. */
+.hand {
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
 
 .robot__art {
@@ -322,44 +325,35 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* Coordonnées en % de la boîte du robot, calées sur le viewBox 220x300. */
+/* Coordonnées en % de la boîte du robot, calées sur le viewBox 300x320. */
 
 .zone--head {
-  left: 31.8%;
-  top: 10.7%;
-  width: 36.4%;
-  height: 16.7%;
+  left: 37.3%;
+  top: 11.3%;
+  width: 25.4%;
+  height: 13.1%;
 }
 
-.zone--hand-left {
-  left: 6.4%;
-  top: 60.7%;
-  width: 20%;
-  height: 14.7%;
-  border-radius: 50%;
+.zone--face {
+  left: 35.3%;
+  top: 26.6%;
+  width: 29.4%;
+  height: 9.4%;
 }
 
-.zone--hand-right {
-  left: 73.6%;
-  top: 60.7%;
-  width: 20%;
-  height: 14.7%;
-  border-radius: 50%;
+.zone--torso {
+  left: 32%;
+  top: 42.5%;
+  width: 36%;
+  height: 27.5%;
+  border-color: transparent;
+  background: none;
 }
 
-.zone--belt {
-  left: 30%;
-  top: 61.3%;
-  width: 40%;
-  height: 9.3%;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-}
-
-.zone--memory {
-  left: 4%;
-  top: 88%;
-  width: 92%;
+.zone--books {
+  left: 3%;
+  top: 79%;
+  width: 29%;
   height: 11%;
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -369,19 +363,30 @@ body {
   border: none;
   background: none;
   padding: 0 2px;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
   border-radius: 6px;
 }
 
 .zone--head .equipped {
-  font-size: 2.9rem;
+  font-size: 2.1rem;
 }
 
-.zone--belt .equipped,
-.zone--memory .equipped {
-  font-size: 1.15rem;
+.zone--face .equipped {
+  font-size: 1.3rem;
+}
+
+.equipped--hand {
+  font-size: 1.7rem;
+  padding: 5px;
+  border-radius: 50%;
+  background: #2c231b;
+  border: 2px solid var(--off);
+}
+
+.robot.is-awake .equipped--hand {
+  border-color: var(--amber);
 }
 
 .equipped.is-selected {
@@ -573,42 +578,26 @@ body {
   }
 
   .palette {
-    width: 100%;
-    display: flex;
-    gap: 16px;
-    padding: 10px 14px;
-    border-right: none;
-    border-bottom: 2px solid var(--border);
-    overflow-x: auto;
-  }
-
-  .palette__group + .palette__group {
-    margin-top: 0;
-  }
-
-  .palette__group {
-    flex: 0 0 auto;
-  }
-
-  .palette__title span {
-    display: none;
-  }
-
-  .palette__objects {
-    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 10px 12px;
+    justify-content: flex-start;
   }
 
   .object {
-    width: 58px;
-    padding: 4px 2px;
+    width: 80px;
+    padding: 6px 4px;
   }
 
   .object__icon {
-    font-size: 1.5rem;
+    font-size: 1.7rem;
   }
 
   .object__label {
-    font-size: 0.58rem;
+    font-size: 0.7rem;
+  }
+
+  .object__hint {
+    font-size: 0.56rem;
   }
 
   .stage {

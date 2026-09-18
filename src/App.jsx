@@ -15,8 +15,9 @@ function slotAt(x, y) {
 export default function App() {
   const [name, setName] = useState('Mon agent');
   const [brain, setBrain] = useState(null);
-  const [tools, setTools] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [tools, setTools] = useState([]);
+  const [rags, setRags] = useState([]);
   const [selectedUid, setSelectedUid] = useState(null);
   const [exporting, setExporting] = useState(false);
 
@@ -27,8 +28,9 @@ export default function App() {
   const equip = useCallback((object) => {
     const item = newItem(object);
     if (object.slot === 'brain') setBrain(item);
+    if (object.slot === 'skill') setSkills((s) => [...s, item]);
     if (object.slot === 'tool') setTools((t) => [...t, item]);
-    if (object.slot === 'memory') setSkills((s) => [...s, item]);
+    if (object.slot === 'rag') setRags((r) => [...r, item]);
     setSelectedUid(item.uid);
   }, []);
 
@@ -52,10 +54,11 @@ export default function App() {
       const drag = dragRef.current;
       if (drag) {
         const moved = Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY);
-        const slot = slotAt(e.clientX, e.clientY);
-        // Relâché sur le bon emplacement, ou simple tap sans avoir bougé :
+        // Lâché sur le bon emplacement, ou simple tap sans avoir bougé :
         // dans les deux cas l'objet rejoint le robot.
-        if (slot === drag.object.slot || moved < TAP_SLOP) equip(drag.object);
+        if (slotAt(e.clientX, e.clientY) === drag.object.slot || moved < TAP_SLOP) {
+          equip(drag.object);
+        }
       }
       dragRef.current = null;
       setGhost(null);
@@ -73,31 +76,33 @@ export default function App() {
   }, [ghost, equip]);
 
   const selected =
-    [brain, ...tools, ...skills].find((item) => item && item.uid === selectedUid) ?? null;
+    [brain, ...skills, ...tools, ...rags].find((item) => item && item.uid === selectedUid) ?? null;
 
   const updateSelected = useCallback(
     (key, value) => {
       const patch = (item) => (item && item.uid === selectedUid ? { ...item, [key]: value } : item);
       setBrain(patch);
-      setTools((t) => t.map(patch));
       setSkills((s) => s.map(patch));
+      setTools((t) => t.map(patch));
+      setRags((r) => r.map(patch));
     },
     [selectedUid],
   );
 
   const removeSelected = useCallback(() => {
+    const keep = (item) => item.uid !== selectedUid;
     setBrain((b) => (b && b.uid === selectedUid ? null : b));
-    setTools((t) => t.filter((item) => item.uid !== selectedUid));
-    setSkills((s) => s.filter((item) => item.uid !== selectedUid));
+    setSkills((s) => s.filter(keep));
+    setTools((t) => t.filter(keep));
+    setRags((r) => r.filter(keep));
     setSelectedUid(null);
   }, [selectedUid]);
 
-  const config = {
-    agent: { label: name },
-    brain,
-    tools,
-    memory: skills,
-  };
+  const hint = !brain
+    ? 'Attrape le cerveau et lâche-le dans sa tête.'
+    : tools.length === 0
+      ? 'Pose un outil sur son torse : un bras pousse pour le tenir.'
+      : 'Ajoute des yeux, d’autres outils, ou un livre sous sa main.';
 
   return (
     <div className="app">
@@ -112,28 +117,25 @@ export default function App() {
           aria-label="Nom de l’agent"
         />
         <button type="button" className="app__export" onClick={() => setExporting(true)}>
-          🚀 Exporter la config
+          🚀 Exporter
         </button>
       </header>
 
-      <div className="app__body">
-        <Palette onGrab={startDrag} />
+      <Palette onGrab={startDrag} />
 
+      <div className="app__body">
         <main className="stage">
           <Robot
             brain={brain}
-            tools={tools}
             skills={skills}
+            tools={tools}
+            rags={rags}
             dragSlot={ghost?.slot ?? null}
             hoverSlot={hoverSlot}
             selectedUid={selectedUid}
             onSelect={setSelectedUid}
           />
-          <p className="stage__hint">
-            {brain
-              ? 'Pose d’autres objets sur ses mains ou à ses pieds.'
-              : 'Attrape le cerveau et lâche-le dans sa tête.'}
-          </p>
+          <p className="stage__hint">{hint}</p>
         </main>
 
         <ConfigPanel
@@ -151,7 +153,12 @@ export default function App() {
         </div>
       )}
 
-      {exporting && <ExportModal config={config} onClose={() => setExporting(false)} />}
+      {exporting && (
+        <ExportModal
+          config={{ agent: { label: name }, brain, skills, tools, rag: rags }}
+          onClose={() => setExporting(false)}
+        />
+      )}
     </div>
   );
 }
