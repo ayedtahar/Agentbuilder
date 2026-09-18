@@ -1,8 +1,8 @@
 # ⚒️ Agent Builder
 
-Un établi visuel pour assembler ton propre agent IA de façon ludique :
-glisse-dépose des blocs (Cerveau/LLM, Tool, Skill/RAG), relie-les au cœur
-de l'agent, et exporte la configuration en JSON.
+Un établi visuel pour équiper ton propre agent IA de façon ludique : un
+robot au centre, auquel on branche un cerveau, des outils et de la
+mémoire, puis dont on exporte la configuration en JSON.
 
 C'est un **prototype visuel** : l'assemblage produit une config d'agent,
 mais rien n'est exécuté (pas d'appel LLM réel, pas de tools branchés à de
@@ -17,15 +17,24 @@ npm run dev
 
 ## Comment ça marche
 
-- Un bloc **Agent** (⚡) est déjà posé sur l'établi : c'est le cœur, sa
-  personnalité et son objectif.
-- Glisse un bloc **Cerveau/LLM** (🧠), **Tool** (🔧) ou **Skill/RAG** (📚)
-  depuis la palette de gauche sur l'établi.
-- Clique un bloc pour le configurer dans le panneau de droite.
-- Relie un bloc au cœur de l'agent en tirant un trait depuis son point de
-  connexion vers celui de l'agent.
-- Clique **Exporter la config** pour voir/copier/télécharger le JSON de
-  l'agent assemblé.
+Au centre, un **robot** : c'est l'agent. Il démarre éteint et s'allume à
+mesure qu'on l'équipe.
+
+- Touche (ou glisse) un bloc de la palette pour le poser sur l'établi.
+- Relie-le au robot en tirant un trait depuis son point de connexion.
+- Clique un bloc pour le configurer dans le panneau latéral.
+- **Exporter la config** donne le JSON de l'agent assemblé.
+
+Le robot se lit d'un coup d'œil :
+
+| Ce qu'on lui relie | Ce que ça lui fait |
+|---|---|
+| **Cerveau (LLM)** 🧠 | il s'allume : yeux, antenne, et son écran affiche le modèle |
+| **Tool** ✉️ ✋ 🔍 | une main se remplit de l'objet du geste ; au-delà de deux, ça part à la ceinture |
+| **Skill / RAG** 📚 📜 🎓 | la mémoire s'empile à ses pieds |
+
+L'icône d'un bloc suit ce qu'il fait, pas son type : changer le geste d'un
+tool change l'objet que le robot tient en main.
 
 ## Prochaines étapes possibles
 
