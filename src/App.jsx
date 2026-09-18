@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -26,6 +26,10 @@ const nodeTypes = {
 
 let idCounter = 1;
 const nextId = () => `block-${idCounter++}`;
+
+// Sans plafond de zoom, fitView grossit le cœur seul jusqu'à remplir l'écran
+// et les blocs posés ensuite débordent du canvas.
+const FIT_VIEW_OPTIONS = { maxZoom: 1, padding: 0.3 };
 
 const initialNodes = [
   {
@@ -57,11 +61,27 @@ function Forge() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [exporting, setExporting] = useState(false);
+  const canvasRef = useRef(null);
+  const addCount = useRef(0);
   const { screenToFlowPosition } = useReactFlow();
 
   const onConnect = useCallback(
     (connection) => setEdges((eds) => addEdge({ ...connection, animated: true }, eds)),
     [setEdges],
+  );
+
+  const addBlock = useCallback(
+    (blockType, position) => {
+      setNodes((nds) =>
+        nds.concat({
+          id: nextId(),
+          type: blockType,
+          position,
+          data: { ...BLOCK_TYPES[blockType].defaultData },
+        }),
+      );
+    },
+    [setNodes],
   );
 
   const onDragOver = useCallback((event) => {
@@ -74,17 +94,28 @@ function Forge() {
       event.preventDefault();
       const blockType = event.dataTransfer.getData('application/agent-forge-block');
       if (!blockType || !BLOCK_TYPES[blockType]) return;
-
-      const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
-      const newNode = {
-        id: nextId(),
-        type: blockType,
-        position,
-        data: { ...BLOCK_TYPES[blockType].defaultData },
-      };
-      setNodes((nds) => nds.concat(newNode));
+      addBlock(blockType, screenToFlowPosition({ x: event.clientX, y: event.clientY }));
     },
-    [screenToFlowPosition, setNodes],
+    [addBlock, screenToFlowPosition],
+  );
+
+  // Le glisser-déposer HTML5 n'existe pas au tactile : toucher un bloc de la
+  // palette doit suffire à le poser.
+  const onPaletteTap = useCallback(
+    (blockType) => {
+      const rect = canvasRef.current.getBoundingClientRect();
+      // Cascade verticale : un bloc fait ~62px de haut, moins d'écart et les
+      // blocs posés à la suite se recouvrent.
+      const slot = addCount.current++ % 4;
+      addBlock(
+        blockType,
+        screenToFlowPosition({
+          x: rect.x + rect.width * 0.25 + slot * 14,
+          y: rect.y + rect.height * 0.12 + slot * 80,
+        }),
+      );
+    },
+    [addBlock, screenToFlowPosition],
   );
 
   const onNodeClick = useCallback((_, node) => setSelectedId(node.id), []);
@@ -121,9 +152,9 @@ function Forge() {
       </header>
 
       <div className="forge__body">
-        <Palette />
+        <Palette onTap={onPaletteTap} />
 
-        <div className="forge__canvas">
+        <div className="forge__canvas" ref={canvasRef}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -136,6 +167,7 @@ function Forge() {
             onPaneClick={onPaneClick}
             nodeTypes={nodeTypes}
             fitView
+            fitViewOptions={FIT_VIEW_OPTIONS}
           >
             <Background variant="dots" gap={18} size={1.5} color="#5b4636" />
             <Controls />
