@@ -17,8 +17,19 @@ export default function BlockNode({ type, data, selected }) {
       className={`block-node${selected ? ' is-selected' : ''}`}
       style={{ '--block-color': meta.color }}
     >
-      {type !== 'agent' && <Handle type="source" position={Position.Right} />}
-      {type === 'agent' && <Handle type="target" position={Position.Left} />}
+      {/* Deux points de connexion par bloc : le trait reste lisible quel que
+          soit le côté où l'utilisateur pose le bloc par rapport au cœur. */}
+      {type !== 'agent' ? (
+        <>
+          <Handle type="source" position={Position.Left} id="left" />
+          <Handle type="source" position={Position.Right} id="right" />
+        </>
+      ) : (
+        <>
+          <Handle type="target" position={Position.Left} id="left" />
+          <Handle type="target" position={Position.Right} id="right" />
+        </>
+      )}
 
       <div className="block-node__icon">{meta.icon}</div>
       <div className="block-node__body">

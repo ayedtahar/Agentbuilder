@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -10,7 +10,6 @@ import {
   useEdgesState,
   useReactFlow,
 } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 
 import { BLOCK_TYPES } from './blockLibrary';
 import Palette from './components/Palette';
@@ -58,7 +57,6 @@ function Forge() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [exporting, setExporting] = useState(false);
-  const wrapperRef = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
 
   const onConnect = useCallback(
@@ -125,7 +123,7 @@ function Forge() {
       <div className="forge__body">
         <Palette />
 
-        <div className="forge__canvas" ref={wrapperRef}>
+        <div className="forge__canvas">
           <ReactFlow
             nodes={nodes}
             edges={edges}

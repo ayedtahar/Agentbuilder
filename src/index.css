@@ -105,7 +105,7 @@ body {
 }
 
 .react-flow__minimap {
-  background: var(--bg-panel) !important;
+  background: var(--bg-panel);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -113,6 +113,17 @@ body {
 .react-flow__edge-path {
   stroke: var(--amber);
   stroke-width: 2;
+}
+
+.react-flow__handle {
+  width: 11px;
+  height: 11px;
+  background: var(--block-color);
+  border: 2px solid #1b140f;
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(18, 13, 9, 0.65);
 }
 
 /* Palette */
