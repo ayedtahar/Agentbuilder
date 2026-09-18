@@ -20,7 +20,7 @@ export const OBJECTS = [
   {
     id: 'tool',
     slot: 'tool',
-    icon: '🔧',
+    icon: '🔨',
     label: 'Outil',
     hint: 'un bras de plus',
     defaults: { label: 'Nouvel outil', description: '', parameters: '' },
@@ -30,7 +30,7 @@ export const OBJECTS = [
     slot: 'rag',
     icon: '📚',
     label: 'RAG',
-    hint: 'sous sa main',
+    hint: 'sur son torse',
     defaults: { label: 'Base de connaissances', source: '', description: '' },
   },
 ];

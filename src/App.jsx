@@ -102,7 +102,7 @@ export default function App() {
     ? 'Attrape le cerveau et lâche-le dans sa tête.'
     : tools.length === 0
       ? 'Pose un outil sur son torse : un bras pousse pour le tenir.'
-      : 'Ajoute des yeux, d’autres outils, ou un livre sous sa main.';
+      : 'Ajoute des yeux sur son visage, d’autres outils, ou un RAG sur son torse.';
 
   return (
     <div className="app">
