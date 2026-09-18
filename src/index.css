@@ -1,0 +1,362 @@
+:root {
+  --bg: #1b140f;
+  --bg-panel: #241a13;
+  --border: #3d2c20;
+  --text: #f5e9da;
+  --text-dim: #b8a690;
+  --amber: #fbbf24;
+  --orange: #f97316;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.forge {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.forge__header {
+  padding: 14px 24px;
+  border-bottom: 2px solid var(--border);
+  background: linear-gradient(90deg, #2a1c12, #1b140f);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.forge__header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: var(--amber);
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.35);
+}
+
+.forge__header p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.forge__export {
+  background: linear-gradient(135deg, var(--orange), var(--amber));
+  border: none;
+  color: #1b140f;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+  transition: transform 0.15s ease;
+}
+
+.forge__export:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.forge__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.forge__canvas {
+  flex: 1;
+  background: var(--bg);
+}
+
+.forge__canvas .react-flow__attribution {
+  display: none;
+}
+
+.react-flow__controls {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.react-flow__controls-button {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  fill: var(--text);
+  stroke: var(--text);
+}
+
+.react-flow__controls-button:hover {
+  background: #322418;
+}
+
+.react-flow__minimap {
+  background: var(--bg-panel) !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.react-flow__edge-path {
+  stroke: var(--amber);
+  stroke-width: 2;
+}
+
+/* Palette */
+
+.palette {
+  width: 220px;
+  padding: 16px;
+  border-right: 2px solid var(--border);
+  background: var(--bg-panel);
+  overflow-y: auto;
+}
+
+.palette__title {
+  font-weight: 700;
+  color: var(--amber);
+  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.palette__hint {
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  margin: 0 0 14px;
+}
+
+.palette__item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 2px solid var(--block-color);
+  background: color-mix(in srgb, var(--block-color) 12%, var(--bg-panel));
+  cursor: grab;
+  transition: transform 0.15s ease;
+}
+
+.palette__item:hover {
+  transform: translateX(2px);
+}
+
+.palette__item:active {
+  cursor: grabbing;
+}
+
+.palette__icon {
+  font-size: 1.4rem;
+}
+
+.palette__label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.palette__tagline {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+/* Nodes */
+
+.block-node {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 190px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 2px solid var(--block-color);
+  background: color-mix(in srgb, var(--block-color) 16%, #201812);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+}
+
+.block-node.is-selected {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--block-color) 60%, white);
+}
+
+.block-node__icon {
+  font-size: 1.5rem;
+}
+
+.block-node__label {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.block-node__preview {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+/* Config panel */
+
+.config-panel {
+  width: 280px;
+  padding: 16px;
+  border-left: 2px solid var(--border);
+  background: var(--bg-panel);
+  overflow-y: auto;
+}
+
+.config-panel--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 32px 20px;
+}
+
+.config-panel__header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 700;
+  color: var(--block-color);
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+}
+
+.config-field {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.config-field__label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.config-field input[type='text'],
+.config-field textarea,
+.config-field select {
+  width: 100%;
+  background: #150f0a;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.config-field__range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.config-field__range input {
+  flex: 1;
+}
+
+.config-panel__delete {
+  width: 100%;
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid #d94f4f;
+  color: #ff8080;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.config-panel__delete:hover {
+  background: rgba(217, 79, 79, 0.15);
+}
+
+/* Modal */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  background: var(--bg-panel);
+  border: 2px solid var(--amber);
+  border-radius: 14px;
+  padding: 20px;
+  width: min(560px, 90vw);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.modal__header h2 {
+  margin: 0;
+  color: var(--amber);
+  font-size: 1.1rem;
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.modal__json {
+  background: #120d09;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.78rem;
+  overflow: auto;
+  flex: 1;
+}
+
+.modal__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.modal__actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, var(--orange), var(--amber));
+  color: #1b140f;
+  font-weight: 700;
+  cursor: pointer;
+}
