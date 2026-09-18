@@ -1,38 +1,30 @@
-import { BLOCK_TYPES, PALETTE_ORDER } from '../blockLibrary';
+import { OBJECTS, SLOTS } from '../catalog';
 
-export default function Palette({ onTap }) {
-  const onDragStart = (event, blockType) => {
-    event.dataTransfer.setData('application/agent-forge-block', blockType);
-    event.dataTransfer.effectAllowed = 'move';
-  };
-
+export default function Palette({ onGrab }) {
   return (
     <aside className="palette">
-      <div className="palette__title">Blocs</div>
-      <p className="palette__hint">
-        Touche un bloc — ou glisse-le — puis relie-le au robot.
-      </p>
-      {PALETTE_ORDER.map((type) => {
-        const meta = BLOCK_TYPES[type];
-        return (
-          <button
-            key={type}
-            type="button"
-            className="palette__item"
-            style={{ '--block-color': meta.color }}
-            draggable
-            onDragStart={(event) => onDragStart(event, type)}
-            onClick={() => onTap(type)}
-          >
-            <span className="palette__icon">{meta.icon}</span>
-
-            <span className="palette__text">
-              <span className="palette__label">{meta.label}</span>
-              <span className="palette__tagline">{meta.tagline}</span>
-            </span>
-          </button>
-        );
-      })}
+      {Object.entries(SLOTS).map(([slot, meta]) => (
+        <section key={slot} className="palette__group">
+          <h2 className="palette__title">
+            {meta.label} <span>· {meta.where}</span>
+          </h2>
+          <div className="palette__objects">
+            {OBJECTS.filter((o) => o.slot === slot).map((object) => (
+              <button
+                key={object.id}
+                type="button"
+                className="object"
+                title={object.label}
+                aria-label={object.label}
+                onPointerDown={(e) => onGrab(object, e)}
+              >
+                <span className="object__icon">{object.icon}</span>
+                <span className="object__label">{object.label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
     </aside>
   );
 }
