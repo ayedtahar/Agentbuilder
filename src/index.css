@@ -228,6 +228,151 @@ body {
   color: var(--text-dim);
 }
 
+/* Robot */
+
+.robot {
+  --block-color: var(--amber);
+  width: 275px;
+  padding: 6px 8px 10px;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  text-align: center;
+}
+
+.robot.is-selected {
+  border-color: var(--amber);
+  background: rgba(251, 191, 36, 0.06);
+}
+
+.robot__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Le dessin n'occupe que le centre de sa boîte (les côtés servent aux livres
+   et à la ceinture) : sans recalage les fils aboutiraient dans le vide. */
+.robot .react-flow__handle {
+  top: 47%;
+}
+
+.robot .react-flow__handle-left {
+  left: 16%;
+}
+
+.robot .react-flow__handle-right {
+  right: 16%;
+}
+
+/* Éteint par défaut : le robot ne s'allume qu'une fois un cerveau relié. */
+.robot__shell {
+  fill: #4a3a2c;
+  stroke: #6b563f;
+  stroke-width: 2;
+}
+
+.robot__wire {
+  stroke: #6b563f;
+  stroke-width: 3;
+}
+
+.robot__bulb,
+.robot__eye {
+  fill: #2c231b;
+  stroke: #6b563f;
+  stroke-width: 2;
+}
+
+.robot__mouth {
+  fill: #6b563f;
+}
+
+.robot__screen {
+  fill: #191009;
+  stroke: #6b563f;
+  stroke-width: 2;
+}
+
+.robot__screen-text {
+  fill: var(--text-dim);
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.robot__hand {
+  fill: #2c231b;
+  stroke: #6b563f;
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+}
+
+.robot__hand.is-filled {
+  fill: #3a2c1f;
+  stroke: var(--orange);
+  stroke-dasharray: none;
+}
+
+.robot__hand-icon,
+.robot__belt-icon,
+.robot__book {
+  font-size: 19px;
+}
+
+.robot.is-awake .robot__shell {
+  fill: #6b5030;
+  stroke: var(--amber);
+}
+
+.robot.is-awake .robot__wire {
+  stroke: var(--amber);
+}
+
+.robot.is-awake .robot__bulb {
+  fill: var(--orange);
+  stroke: var(--amber);
+  animation: robot-pulse 2s ease-in-out infinite;
+}
+
+.robot.is-awake .robot__eye {
+  fill: var(--amber);
+  stroke: var(--amber);
+}
+
+.robot.is-awake .robot__mouth {
+  fill: var(--amber);
+}
+
+.robot.is-awake .robot__screen {
+  stroke: var(--amber);
+}
+
+.robot.is-awake .robot__screen-text {
+  fill: var(--amber);
+}
+
+@keyframes robot-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .robot.is-awake .robot__bulb {
+    animation: none;
+  }
+}
+
+.robot__name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-top: 2px;
+}
+
+.robot__status {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
 /* Config panel */
 
 .config-panel {

@@ -9,7 +9,9 @@ export default function Palette({ onTap }) {
   return (
     <aside className="palette">
       <div className="palette__title">Blocs</div>
-      <p className="palette__hint">Touche un bloc — ou glisse-le à l’endroit voulu.</p>
+      <p className="palette__hint">
+        Touche un bloc — ou glisse-le — puis relie-le au robot.
+      </p>
       {PALETTE_ORDER.map((type) => {
         const meta = BLOCK_TYPES[type];
         return (
@@ -23,6 +25,7 @@ export default function Palette({ onTap }) {
             onClick={() => onTap(type)}
           >
             <span className="palette__icon">{meta.icon}</span>
+
             <span className="palette__text">
               <span className="palette__label">{meta.label}</span>
               <span className="palette__tagline">{meta.tagline}</span>

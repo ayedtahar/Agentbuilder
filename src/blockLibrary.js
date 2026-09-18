@@ -2,6 +2,26 @@
 // Chaque type décrit son apparence dans la palette/le canvas et le
 // formulaire de configuration affiché dans le panneau latéral.
 
+// Un tool se reconnaît au geste qu'il exécute, une skill à la forme sous
+// laquelle la connaissance arrive.
+export const TOOL_ICONS = {
+  'envoyer un mail': '✉️',
+  'agir, manipuler': '✋',
+  'chercher sur le web': '🔍',
+  'appeler une api': '🔌',
+  'exécuter du code': '💻',
+  'lire un fichier': '📄',
+  'gérer un agenda': '📅',
+};
+
+export const SKILL_ICONS = {
+  documents: '📚',
+  'site web': '🌐',
+  'base de données': '🗄️',
+  'procédure à suivre': '📜',
+  'tour de main': '🎓',
+};
+
 export const BLOCK_TYPES = {
   agent: {
     label: 'Agent',
@@ -53,24 +73,19 @@ export const BLOCK_TYPES = {
   },
   tool: {
     label: 'Tool',
-    icon: '🔧',
+    icon: '✉️',
     color: '#38bdf8',
-    tagline: "Une action que l'agent peut exécuter",
+    tagline: "Un bras : ce que l'agent sait faire",
     droppable: true,
     defaultData: {
-      label: 'Nouvel outil',
-      kind: 'function',
+      label: 'Envoyer un mail',
+      kind: 'envoyer un mail',
       description: '',
       parameters: '',
     },
     fields: [
       { key: 'label', label: 'Nom du tool', type: 'text' },
-      {
-        key: 'kind',
-        label: 'Type',
-        type: 'select',
-        options: ['function', 'api', 'recherche web', 'code'],
-      },
+      { key: 'kind', label: 'Geste', type: 'select', options: Object.keys(TOOL_ICONS) },
       { key: 'description', label: 'Ce que fait le tool', type: 'textarea' },
       { key: 'parameters', label: 'Paramètres (un par ligne)', type: 'textarea' },
     ],
@@ -79,22 +94,17 @@ export const BLOCK_TYPES = {
     label: 'Skill / RAG',
     icon: '📚',
     color: '#a78bfa',
-    tagline: 'Une connaissance ou compétence injectée',
+    tagline: 'Une mémoire : ce que l’agent sait',
     droppable: true,
     defaultData: {
-      label: 'Nouvelle skill',
+      label: 'Base de connaissances',
       sourceType: 'documents',
       source: '',
       description: '',
     },
     fields: [
       { key: 'label', label: 'Nom de la skill', type: 'text' },
-      {
-        key: 'sourceType',
-        label: 'Source',
-        type: 'select',
-        options: ['documents', 'site web', 'api', 'base de données', 'procédure'],
-      },
+      { key: 'sourceType', label: 'Forme', type: 'select', options: Object.keys(SKILL_ICONS) },
       { key: 'source', label: 'Référence (URL, dossier, nom...)', type: 'text' },
       { key: 'description', label: 'Description', type: 'textarea' },
     ],
@@ -102,3 +112,11 @@ export const BLOCK_TYPES = {
 };
 
 export const PALETTE_ORDER = ['llm', 'tool', 'skill'];
+
+// L'icône d'un bloc suit ce qu'il fait, pas son type : un bloc « envoyer un
+// mail » doit se lire comme une enveloppe sur le robot, pas comme une boîte.
+export function iconFor(type, data) {
+  if (type === 'tool') return TOOL_ICONS[data.kind] ?? BLOCK_TYPES.tool.icon;
+  if (type === 'skill') return SKILL_ICONS[data.sourceType] ?? BLOCK_TYPES.skill.icon;
+  return BLOCK_TYPES[type].icon;
+}

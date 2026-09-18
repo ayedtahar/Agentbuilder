@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -16,9 +16,10 @@ import Palette from './components/Palette';
 import ConfigPanel from './components/ConfigPanel';
 import ExportModal from './components/ExportModal';
 import BlockNode from './nodes/BlockNode';
+import RobotNode from './nodes/RobotNode';
 
 const nodeTypes = {
-  agent: BlockNode,
+  agent: RobotNode,
   llm: BlockNode,
   tool: BlockNode,
   skill: BlockNode,
@@ -31,6 +32,9 @@ const nextId = () => `block-${idCounter++}`;
 // et les blocs posés ensuite débordent du canvas.
 const FIT_VIEW_OPTIONS = { maxZoom: 1, padding: 0.3 };
 
+// Doit rester aligné sur la media query de index.css.
+const NARROW_WIDTH = 860;
+
 const initialNodes = [
   {
     id: 'agent-core',
@@ -41,7 +45,7 @@ const initialNodes = [
   },
 ];
 
-function buildConfig(nodes, edges) {
+function collectWiring(nodes, edges) {
   const agentNode = nodes.find((n) => n.type === 'agent');
   const connectedIds = new Set(
     edges.filter((e) => e.target === agentNode.id).map((e) => e.source),
@@ -49,11 +53,16 @@ function buildConfig(nodes, edges) {
   const connected = nodes.filter((n) => connectedIds.has(n.id));
 
   return {
-    agent: { label: agentNode.data.label, persona: agentNode.data.persona, goal: agentNode.data.goal },
+    agentNode,
     llm: connected.find((n) => n.type === 'llm')?.data ?? null,
     tools: connected.filter((n) => n.type === 'tool').map((n) => n.data),
     skills: connected.filter((n) => n.type === 'skill').map((n) => n.data),
   };
+}
+
+function buildConfig({ agentNode, llm, tools, skills }) {
+  const { label, persona, goal } = agentNode.data;
+  return { agent: { label, persona, goal }, llm, tools, skills };
 }
 
 function Forge() {
@@ -61,9 +70,7 @@ function Forge() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [exporting, setExporting] = useState(false);
-  const canvasRef = useRef(null);
-  const addCount = useRef(0);
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, fitView } = useReactFlow();
 
   const onConnect = useCallback(
     (connection) => setEdges((eds) => addEdge({ ...connection, animated: true }, eds)),
@@ -100,22 +107,24 @@ function Forge() {
   );
 
   // Le glisser-déposer HTML5 n'existe pas au tactile : toucher un bloc de la
-  // palette doit suffire à le poser.
+  // palette doit suffire à le poser. On le range en colonne à gauche du robot
+  // plutôt qu'à l'écran, sinon sur mobile le bloc se pose sur lui.
   const onPaletteTap = useCallback(
     (blockType) => {
-      const rect = canvasRef.current.getBoundingClientRect();
-      // Cascade verticale : un bloc fait ~62px de haut, moins d'écart et les
-      // blocs posés à la suite se recouvrent.
-      const slot = addCount.current++ % 4;
+      const robot = nodes.find((n) => n.type === 'agent');
+      const placed = nodes.length - 1;
+      // Un écran étroit est haut : on empile au-dessus du robot au lieu de
+      // s'étaler à côté, sinon le recadrage réduit tout à rien.
+      const narrow = window.innerWidth < NARROW_WIDTH;
       addBlock(
         blockType,
-        screenToFlowPosition({
-          x: rect.x + rect.width * 0.25 + slot * 14,
-          y: rect.y + rect.height * 0.12 + slot * 80,
-        }),
+        narrow
+          ? { x: robot.position.x - 40, y: robot.position.y - 140 - placed * 90 }
+          : { x: robot.position.x - 380, y: robot.position.y - 60 + placed * 90 },
       );
+      requestAnimationFrame(() => fitView(FIT_VIEW_OPTIONS));
     },
-    [addBlock, screenToFlowPosition],
+    [addBlock, fitView, nodes],
   );
 
   const onNodeClick = useCallback((_, node) => setSelectedId(node.id), []);
@@ -140,12 +149,25 @@ function Forge() {
   );
 
   const selectedNode = nodes.find((n) => n.id === selectedId) ?? null;
+  const wiring = useMemo(() => collectWiring(nodes, edges), [nodes, edges]);
+
+  // Le robot se dessine à partir de ce qui lui est relié, donc son câblage
+  // descend dans ses data au lieu d'être recalculé dans le nœud.
+  const flowNodes = useMemo(
+    () =>
+      nodes.map((n) =>
+        n.type === 'agent'
+          ? { ...n, data: { ...n.data, llm: wiring.llm, tools: wiring.tools, skills: wiring.skills } }
+          : n,
+      ),
+    [nodes, wiring],
+  );
 
   return (
     <div className="forge">
       <header className="forge__header">
         <h1>⚒️ Agent Builder</h1>
-        <p>Assemble ton agent : glisse des blocs, relie-les au cœur, exporte.</p>
+        <p>Équipe ton robot : pose des blocs, relie-les à lui, exporte.</p>
         <button type="button" className="forge__export" onClick={() => setExporting(true)}>
           🚀 Exporter la config
         </button>
@@ -154,9 +176,9 @@ function Forge() {
       <div className="forge__body">
         <Palette onTap={onPaletteTap} />
 
-        <div className="forge__canvas" ref={canvasRef}>
+        <div className="forge__canvas">
           <ReactFlow
-            nodes={nodes}
+            nodes={flowNodes}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
@@ -179,7 +201,7 @@ function Forge() {
       </div>
 
       {exporting && (
-        <ExportModal config={buildConfig(nodes, edges)} onClose={() => setExporting(false)} />
+        <ExportModal config={buildConfig(wiring)} onClose={() => setExporting(false)} />
       )}
     </div>
   );
