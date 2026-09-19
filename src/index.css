@@ -509,8 +509,7 @@ body {
 
 /* Conversation */
 
-.chat,
-.keygate {
+.chat {
   display: flex;
   flex-direction: column;
   width: 320px;
@@ -521,41 +520,7 @@ body {
   overflow-y: auto;
 }
 
-.chat--idle,
-.keygate {
-  justify-content: center;
-  gap: 10px;
-}
-
-.chat--idle p {
-  color: var(--text-dim);
-  font-size: 0.85rem;
-  text-align: center;
-}
-
-.keygate__title {
-  margin: 0;
-  font-size: 1rem;
-  color: var(--amber);
-}
-
-.keygate__text,
-.keygate__warn {
-  margin: 0;
-  font-size: 0.78rem;
-  line-height: 1.45;
-  color: var(--text-dim);
-}
-
-.keygate__warn {
-  padding: 8px 10px;
-  border: 1px solid #7a4a1e;
-  border-radius: 8px;
-  background: rgba(249, 115, 22, 0.1);
-  color: #f6c98a;
-}
-
-.keygate__input,
+.keybar__input,
 .chat__input {
   background: #150f0a;
   border: 1px solid var(--border);
@@ -566,7 +531,7 @@ body {
   font-size: 0.85rem;
 }
 
-.keygate__submit,
+.keybar__submit,
 .chat__send {
   border: none;
   border-radius: 8px;
@@ -578,7 +543,7 @@ body {
   cursor: pointer;
 }
 
-.keygate__submit:disabled,
+.keybar__submit:disabled,
 .chat__send:disabled {
   opacity: 0.45;
   cursor: default;
@@ -649,17 +614,64 @@ body {
   min-width: 0;
 }
 
-.chat__forget {
-  margin-top: 8px;
+/* Barre de clé, au pied de la conversation */
+
+.keybar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid var(--border);
+  font-size: 0.72rem;
+}
+
+.keybar--form {
+  flex-wrap: wrap;
+}
+
+.keybar__state {
+  color: var(--amber);
+}
+
+.keybar__state--demo {
+  color: var(--text-dim);
+}
+
+.keybar__link {
+  margin-left: auto;
   border: none;
   background: none;
+  padding: 0;
   color: var(--text-dim);
   font: inherit;
-  font-size: 0.72rem;
   text-decoration: underline;
   cursor: pointer;
-  align-self: flex-start;
-  padding: 0;
+}
+
+.keybar__input {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.78rem;
+  padding: 6px 8px;
+}
+
+.keybar__submit {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+}
+
+.bubble__tag {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(184, 166, 144, 0.22);
+  color: var(--text-dim);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  vertical-align: 1px;
 }
 
 /* Le robot montre qu'il réfléchit. */
@@ -882,8 +894,7 @@ body {
     font-size: 0.75rem;
   }
 
-  .chat,
-  .keygate {
+  .chat {
     width: 100%;
     max-height: 45vh;
     border-left: none;
