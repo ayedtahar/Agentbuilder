@@ -1,5 +1,3 @@
-import { OBJECTS_BY_ID } from '../catalog';
-
 const VIEW = { w: 320, h: 340 };
 
 const SHOULDER = { x: 160, y: 182, spread: 56 };
@@ -18,7 +16,15 @@ function armGeometry(index) {
     x: shoulderX + side * distance * Math.cos(angle),
     y: shoulderY + distance * Math.sin(angle),
   });
-  return { shoulderX, shoulderY, elbow: reach(ARM_LENGTH * 0.5), hand: reach(ARM_LENGTH) };
+  const elbow = reach(ARM_LENGTH * 0.5);
+  const hand = reach(ARM_LENGTH);
+
+  // L'outil se tient perpendiculaire au bras, tête en l'air : des deux
+  // perpendiculaires on garde celle qui pointe vers le haut.
+  const armAngle = (Math.atan2(hand.y - elbow.y, hand.x - elbow.x) * 180) / Math.PI;
+  const up = Math.sin(((armAngle + 90) * Math.PI) / 180) < 0 ? armAngle + 90 : armAngle - 90;
+
+  return { shoulderX, shoulderY, elbow, hand, toolAngle: up + 90 };
 }
 
 // Une skill = une paire d'yeux. Plus il y en a, plus elles se resserrent pour
@@ -33,13 +39,12 @@ function eyeGeometry(count) {
   }));
 }
 
-function Zone({ slot, className, dragSlot, hoverSlot, filled, children }) {
+function Zone({ slot, className, dragSlot, filled, children }) {
   const target = dragSlot === slot;
   const classes = [
     'zone',
     className,
     target ? 'is-target' : '',
-    target && hoverSlot === slot ? 'is-active' : '',
     filled ? 'is-filled' : '',
   ]
     .filter(Boolean)
@@ -58,7 +63,6 @@ export default function Robot({
   tools,
   rags,
   dragSlot,
-  hoverSlot,
   selectedUid,
   onSelect,
 }) {
@@ -124,6 +128,16 @@ export default function Robot({
             }}
           >
             <title>{skill.label}</title>
+            {/* Cible de clic couvrant la paire : viser un cercle de quelques
+                pixels, et rien entre les deux, se rate tout le temps. */}
+            <rect
+              className="eyes__hit"
+              x={cx - gap - radius - 3}
+              y={FACE.cy - radius - 3}
+              width={(gap + radius + 3) * 2}
+              height={(radius + 3) * 2}
+              rx={radius}
+            />
             {[cx - gap, cx + gap].map((ex) => (
               <g key={ex}>
                 <circle className="eye" cx={ex} cy={FACE.cy} r={radius} />
@@ -151,7 +165,7 @@ export default function Robot({
 
         {/* Mains : l'outil est tracé avant le poing, son manche disparaît
             derrière et sa tête dépasse au-dessus. */}
-        {arms.map(({ tool, hand }) => (
+        {arms.map(({ tool, hand, toolAngle }) => (
           <g
             key={tool.uid}
             className={`grip${selectedUid === tool.uid ? ' is-selected' : ''}`}
@@ -161,12 +175,13 @@ export default function Robot({
             }}
           >
             <title>{tool.label}</title>
-            {/* Décalé en haut à gauche : le manche du marteau part vers le
-                bas-droite du glyphe, c'est donc lui qui tombe dans le poing
-                pendant que la tête reste visible. */}
-            <text className="grip__tool" x={hand.x - 8} y={hand.y - 2} textAnchor="middle">
-              {OBJECTS_BY_ID[tool.objectId].icon}
-            </text>
+            {/* Marteau dessiné plutôt qu'émoticône : l'emoji porte sa propre
+                inclinaison, impossible de l'aligner sur le bras. Tracé avant
+                le poing, son manche disparaît dedans. */}
+            <g transform={`translate(${hand.x} ${hand.y}) rotate(${toolAngle})`}>
+              <rect className="tool__handle" x="-3.5" y="-30" width="7" height="36" rx="3.5" />
+              <rect className="tool__head" x="-14" y="-39" width="28" height="14" rx="3" />
+            </g>
             <rect
               className="grip__fist"
               x={hand.x - 15}
@@ -190,7 +205,6 @@ export default function Robot({
         slot="brain"
         className="zone--head"
         dragSlot={dragSlot}
-        hoverSlot={hoverSlot}
         filled={awake}
       >
         {brain ? (
@@ -215,7 +229,6 @@ export default function Robot({
         slot="skill"
         className="zone--face"
         dragSlot={dragSlot}
-        hoverSlot={hoverSlot}
         filled={skills.length > 0}
       >
         {skills.length === 0 && <span className="zone__empty zone__empty--faint">yeux</span>}
@@ -229,7 +242,6 @@ export default function Robot({
           slot="tool"
           className={`zone--shoulder zone--shoulder-${side}`}
           dragSlot={dragSlot}
-          hoverSlot={hoverSlot}
           filled={false}
         >
           {dragSlot === 'tool' && <span className="zone__empty zone__empty--faint">+</span>}
@@ -240,7 +252,6 @@ export default function Robot({
         slot="rag"
         className="zone--chest"
         dragSlot={dragSlot}
-        hoverSlot={hoverSlot}
         filled={rags.length > 0}
       >
         {rags.length === 0 && <span className="zone__empty zone__empty--faint">RAG</span>}
