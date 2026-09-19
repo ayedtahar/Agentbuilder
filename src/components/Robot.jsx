@@ -65,13 +65,14 @@ export default function Robot({
   dragSlot,
   selectedUid,
   onSelect,
+  thinking,
 }) {
   const awake = Boolean(brain);
   const arms = tools.map((tool, i) => ({ tool, ...armGeometry(i) }));
   const eyes = eyeGeometry(skills.length).map((geo, i) => ({ ...geo, skill: skills[i] }));
 
   return (
-    <div className={`robot${awake ? ' is-awake' : ''}`}>
+    <div className={`robot${awake ? ' is-awake' : ''}${thinking ? ' is-thinking' : ''}`}>
       <svg className="robot__art" viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}>
         <defs>
           <linearGradient id="shell" x1="0" y1="0" x2="0.3" y2="1">
