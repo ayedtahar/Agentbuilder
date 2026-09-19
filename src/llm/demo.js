@@ -3,28 +3,28 @@
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function listLabels(items) {
+// Les libellés sont libres : on les cite entre guillemets dans une liste au
+// lieu de les couler dans une phrase, qui deviendrait vite bancale.
+function inventory(label, items) {
   const labels = items.map((i) => i.label?.trim()).filter(Boolean);
-  if (labels.length === 0) return '';
-  if (labels.length === 1) return labels[0];
-  return `${labels.slice(0, -1).join(', ')} et ${labels.at(-1)}`;
+  if (labels.length === 0) return null;
+  return `${label} : ${labels.map((l) => `« ${l} »`).join(', ')}`;
 }
 
 function composeDemoText({ name, brain, skills, tools, rags }, question) {
   const who = name?.trim() || 'Mon agent';
   const lines = [`Je suis « ${who} », branché sur ${brain.model}.`];
 
-  if (question) {
-    lines.push(`Tu me demandes : « ${question} ».`);
-  }
+  if (question) lines.push(`Tu me demandes : « ${question} ».`);
 
-  const équipement = [];
-  if (skills.length > 0) équipement.push(`je sais ${listLabels(skills)}`);
-  if (tools.length > 0) équipement.push(`je peux me servir de ${listLabels(tools)}`);
-  if (rags.length > 0) équipement.push(`je m'appuie sur ${listLabels(rags)}`);
+  const posé = [
+    inventory('Skills', skills),
+    inventory('Outils', tools),
+    inventory('Mémoire', rags),
+  ].filter(Boolean);
 
-  if (équipement.length > 0) {
-    lines.push(`Avec ce que tu m'as posé, ${équipement.join(', ')}.`);
+  if (posé.length > 0) {
+    lines.push(`Voici ce que tu m’as posé :\n${posé.map((l) => `• ${l}`).join('\n')}`);
   } else {
     lines.push(
       'Pour l’instant je n’ai qu’un cerveau : pose-moi des yeux, un marteau ou des livres et ma réponse en tiendra compte.',
