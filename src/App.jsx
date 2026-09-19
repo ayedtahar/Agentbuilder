@@ -18,6 +18,7 @@ export default function App() {
   const [exporting, setExporting] = useState(false);
   const [apiKey, setApiKey] = useState(loadKey);
   const [thinking, setThinking] = useState(false);
+  const [tab, setTab] = useState('robot');
 
   const [ghost, setGhost] = useState(null);
   const dragRef = useRef(null);
@@ -97,6 +98,14 @@ export default function App() {
     setApiKey('');
   }, []);
 
+  // Sur écran étroit les trois panneaux ne tiennent pas côte à côte : on en
+  // montre un à la fois. Toucher un objet déjà posé bascule sur ses réglages,
+  // alors qu'en poser un nouveau laisse la vue sur le robot.
+  const selectFromRobot = useCallback((uid) => {
+    setSelectedUid(uid);
+    setTab('config');
+  }, []);
+
   const hint = !brain
     ? 'Attrape le cerveau et lâche-le dans sa tête.'
     : tools.length === 0
@@ -122,7 +131,24 @@ export default function App() {
 
       <Palette onGrab={startDrag} />
 
-      <div className="app__body">
+      <nav className="tabs">
+        {[
+          ['robot', '🤖 Robot'],
+          ['chat', '💬 Discussion'],
+          ['config', '⚙️ Réglages'],
+        ].map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            className={`tabs__btn${tab === id ? ' is-active' : ''}`}
+            onClick={() => setTab(id)}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      <div className={`app__body app__body--${tab}`}>
         <main className="stage">
           <Robot
             brain={brain}
@@ -131,7 +157,7 @@ export default function App() {
             rags={rags}
             dragSlot={ghost?.slot ?? null}
             selectedUid={selectedUid}
-            onSelect={setSelectedUid}
+            onSelect={selectFromRobot}
             thinking={thinking}
           />
           <p className="stage__hint">{hint}</p>
