@@ -1,5 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 
+import { streamDemoReply } from './demo';
+
 // Tous les appels à l'API passent par ce module : le jour où la clé déménage
 // derrière un serveur, seule la construction du client change ici.
 
@@ -54,6 +56,10 @@ export function buildSystemPrompt({ name, brain, skills }) {
  * `onText` reçoit chaque fragment ; la promesse rend le message complet.
  */
 export async function streamReply({ apiKey, agent, messages, onText, signal }) {
+  // Sans clé, l'outil reste utilisable : on répond avec le bouchon plutôt que
+  // de barrer la route à qui veut juste regarder.
+  if (!apiKey) return streamDemoReply({ agent, messages, onText });
+
   const client = createClient(apiKey);
 
   const stream = client.messages.stream(

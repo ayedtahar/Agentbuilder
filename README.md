@@ -5,16 +5,34 @@ le pose dans sa tête, des yeux sur son visage, des outils qui lui font
 pousser des bras, des livres sur son torse — puis on exporte la
 configuration en JSON.
 
-C'est un **prototype visuel** : l'assemblage produit une config d'agent,
-mais rien n'est exécuté (pas d'appel LLM réel, pas de tools branchés à de
-vraies API pour l'instant).
-
 ## Lancer le projet
 
 ```bash
 npm install
 npm run dev
 ```
+
+## Parler au robot
+
+**Sans rien configurer**, le robot répond déjà : c'est le *mode démo*, un
+bouchon local qui compose sa réponse à partir de ce qu'on lui a posé (son
+modèle, ses skills, ses outils). Aucun appel réseau, aucune clé — de quoi
+faire le tour de l'outil et le montrer à quelqu'un. Ces réponses portent la
+mention « démo ».
+
+**Avec une clé**, c'est le vrai modèle qui répond. « Brancher ma clé API »
+au pied de la conversation ; la clé est gardée dans le navigateur
+(`localStorage`) et n'est jamais écrite dans le dépôt.
+
+> **Si tu portes ce code sur un serveur** : ne mets pas la clé dans une
+> variable `VITE_…` d'un `.env`. Vite inline ces variables dans le bundle
+> public — la clé serait servie à tous les visiteurs, ce qui est pire que le
+> `localStorage`. Une clé de serveur doit rester côté serveur, derrière une
+> route qui relaie les appels.
+
+Ce qui tourne réellement aujourd'hui : le cerveau (le modèle appelé) et les
+skills (capacités déclarées dans le prompt système). Les outils et le RAG
+sont encore décoratifs.
 
 ## Comment ça marche
 
