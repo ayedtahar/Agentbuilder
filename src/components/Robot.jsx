@@ -221,16 +221,20 @@ export default function Robot({
         {skills.length === 0 && <span className="zone__empty zone__empty--faint">yeux</span>}
       </Zone>
 
-      {/* Les épaules reçoivent les outils : c'est là que pousse le bras. */}
-      <Zone
-        slot="tool"
-        className="zone--shoulders"
-        dragSlot={dragSlot}
-        hoverSlot={hoverSlot}
-        filled={false}
-      >
-        {dragSlot === 'tool' && <span className="zone__empty zone__empty--faint">+ un bras</span>}
-      </Zone>
+      {/* Une épaule de chaque côté reçoit les outils : c'est là que pousse le
+          bras, et ça laisse la poitrine libre pour le RAG. */}
+      {['left', 'right'].map((side) => (
+        <Zone
+          key={side}
+          slot="tool"
+          className={`zone--shoulder zone--shoulder-${side}`}
+          dragSlot={dragSlot}
+          hoverSlot={hoverSlot}
+          filled={false}
+        >
+          {dragSlot === 'tool' && <span className="zone__empty zone__empty--faint">+</span>}
+        </Zone>
+      ))}
 
       <Zone
         slot="rag"
