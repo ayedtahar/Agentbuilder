@@ -6,12 +6,6 @@ import ConfigPanel from './components/ConfigPanel';
 import ExportModal from './components/ExportModal';
 import Robot from './components/Robot';
 
-const TAP_SLOP = 8;
-
-function slotAt(x, y) {
-  return document.elementFromPoint(x, y)?.closest('[data-slot]')?.dataset.slot ?? null;
-}
-
 export default function App() {
   const [name, setName] = useState('Mon agent');
   const [brain, setBrain] = useState(null);
@@ -22,7 +16,6 @@ export default function App() {
   const [exporting, setExporting] = useState(false);
 
   const [ghost, setGhost] = useState(null);
-  const [hoverSlot, setHoverSlot] = useState(null);
   const dragRef = useRef(null);
 
   const equip = useCallback((object) => {
@@ -38,7 +31,7 @@ export default function App() {
   // nous-mêmes, ce qui donne le même geste à la souris et au tactile.
   const startDrag = useCallback((object, event) => {
     event.preventDefault();
-    dragRef.current = { object, startX: event.clientX, startY: event.clientY };
+    dragRef.current = { object };
     setGhost({ icon: object.icon, slot: object.slot, x: event.clientX, y: event.clientY });
   }, []);
 
@@ -47,22 +40,14 @@ export default function App() {
 
     const move = (e) => {
       setGhost((g) => (g ? { ...g, x: e.clientX, y: e.clientY } : g));
-      setHoverSlot(slotAt(e.clientX, e.clientY));
     };
 
-    const end = (e) => {
-      const drag = dragRef.current;
-      if (drag) {
-        const moved = Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY);
-        // Lâché sur le bon emplacement, ou simple tap sans avoir bougé :
-        // dans les deux cas l'objet rejoint le robot.
-        if (slotAt(e.clientX, e.clientY) === drag.object.slot || moved < TAP_SLOP) {
-          equip(drag.object);
-        }
-      }
+    // Un objet n'a qu'un emplacement possible : viser juste n'apporte rien,
+    // il rejoint sa place où qu'on le lâche.
+    const end = () => {
+      if (dragRef.current) equip(dragRef.current.object);
       dragRef.current = null;
       setGhost(null);
-      setHoverSlot(null);
     };
 
     window.addEventListener('pointermove', move);
@@ -131,7 +116,6 @@ export default function App() {
             tools={tools}
             rags={rags}
             dragSlot={ghost?.slot ?? null}
-            hoverSlot={hoverSlot}
             selectedUid={selectedUid}
             onSelect={setSelectedUid}
           />

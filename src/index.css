@@ -292,6 +292,11 @@ body {
   cursor: pointer;
 }
 
+.eyes__hit {
+  fill: transparent;
+  pointer-events: all;
+}
+
 .eyes.is-selected .eye,
 .grip.is-selected .grip__fist {
   stroke: #fff;
@@ -305,8 +310,16 @@ body {
   stroke-width: 3;
 }
 
-.grip__tool {
-  font-size: 30px;
+.tool__handle {
+  fill: #a8703c;
+  stroke: var(--outline);
+  stroke-width: 2.5;
+}
+
+.tool__head {
+  fill: #aeb6bd;
+  stroke: var(--outline);
+  stroke-width: 2.5;
 }
 
 .grip__knuckle {
@@ -367,7 +380,10 @@ body {
 
 /* Emplacements posés sur le dessin */
 
+/* Les emplacements ne sont plus que des repères : laisser passer le pointeur
+   garde cliquable ce qui est posé dessous, à commencer par les yeux. */
 .zone {
+  pointer-events: none;
   position: absolute;
   display: flex;
   align-items: center;
@@ -472,6 +488,11 @@ body {
   line-height: 1;
   cursor: pointer;
   border-radius: 6px;
+}
+
+.equipped,
+.brain {
+  pointer-events: auto;
 }
 
 .equipped.is-selected {
