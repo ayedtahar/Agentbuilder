@@ -7,7 +7,7 @@ export const OBJECTS = [
     icon: '🧠',
     label: 'Cerveau',
     hint: 'dans sa tête',
-    defaults: { label: 'Cerveau', model: 'claude-sonnet-5', temperature: 0.7, systemPrompt: '' },
+    defaults: { label: 'Cerveau', model: 'claude-opus-5', effort: 'high', systemPrompt: '' },
   },
   {
     id: 'eyes',
@@ -37,20 +37,18 @@ export const OBJECTS = [
 
 export const OBJECTS_BY_ID = Object.fromEntries(OBJECTS.map((o) => [o.id, o]));
 
-const MODELS = [
-  'claude-opus-5',
-  'claude-sonnet-5',
-  'claude-haiku-4-5',
-  'gpt-5',
-  'gemini-3-pro',
-  'llama-4',
-];
+// Seuls des modèles Claude : c'est la seule API que l'app sait appeler, et
+// proposer les autres laisserait croire qu'ils sont branchés.
+const MODELS = ['claude-opus-5', 'claude-sonnet-5', 'claude-haiku-4-5'];
+
+// Remplace la température, rejetée par une erreur 400 sur les modèles récents.
+const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max'];
 
 export const FIELDS = {
   brain: [
     { key: 'label', label: 'Nom', type: 'text' },
     { key: 'model', label: 'Modèle', type: 'select', options: MODELS },
-    { key: 'temperature', label: 'Température', type: 'range', min: 0, max: 1, step: 0.1 },
+    { key: 'effort', label: 'Effort', type: 'select', options: EFFORTS },
     { key: 'systemPrompt', label: 'Instructions système', type: 'textarea' },
   ],
   skill: [

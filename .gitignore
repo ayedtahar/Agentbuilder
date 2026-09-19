@@ -1,3 +1,8 @@
 node_modules
 dist
 .DS_Store
+
+# La clé API vit dans le navigateur, jamais dans le dépôt : ce garde-fou existe
+# pour qu'un fichier d'environnement créé par erreur ne parte pas en commit.
+.env
+.env.*

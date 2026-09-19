@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { FIELDS, OBJECTS_BY_ID, newItem } from './catalog';
+import { loadKey, saveKey } from './llm/client';
 import Palette from './components/Palette';
 import ConfigPanel from './components/ConfigPanel';
 import ExportModal from './components/ExportModal';
+import Chat from './components/Chat';
 import Robot from './components/Robot';
 
 export default function App() {
@@ -14,6 +16,8 @@ export default function App() {
   const [rags, setRags] = useState([]);
   const [selectedUid, setSelectedUid] = useState(null);
   const [exporting, setExporting] = useState(false);
+  const [apiKey, setApiKey] = useState(loadKey);
+  const [thinking, setThinking] = useState(false);
 
   const [ghost, setGhost] = useState(null);
   const dragRef = useRef(null);
@@ -83,6 +87,16 @@ export default function App() {
     setSelectedUid(null);
   }, [selectedUid]);
 
+  const rememberKey = useCallback((key) => {
+    saveKey(key);
+    setApiKey(key);
+  }, []);
+
+  const forgetKey = useCallback(() => {
+    saveKey('');
+    setApiKey('');
+  }, []);
+
   const hint = !brain
     ? 'Attrape le cerveau et lâche-le dans sa tête.'
     : tools.length === 0
@@ -118,9 +132,18 @@ export default function App() {
             dragSlot={ghost?.slot ?? null}
             selectedUid={selectedUid}
             onSelect={setSelectedUid}
+            thinking={thinking}
           />
           <p className="stage__hint">{hint}</p>
         </main>
+
+        <Chat
+          agent={{ name, brain, skills, tools, rags }}
+          apiKey={apiKey}
+          onSaveKey={rememberKey}
+          onForgetKey={forgetKey}
+          onBusyChange={setThinking}
+        />
 
         <ConfigPanel
           item={selected}
