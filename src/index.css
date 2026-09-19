@@ -7,6 +7,7 @@
   --amber: #fbbf24;
   --orange: #f97316;
   --off: #6b563f;
+  --outline: #2e241a;
   font-family: 'Segoe UI', system-ui, sans-serif;
   color-scheme: dark;
 }
@@ -174,40 +175,116 @@ body {
    tiroir de réglages s'ouvre, pas la largeur. */
 .robot {
   position: relative;
-  height: min(430px, 100%);
-  aspect-ratio: 300 / 320;
+  height: min(440px, 100%);
+  aspect-ratio: 320 / 340;
   max-width: 100%;
   flex: 0 1 auto;
 }
 
-.robot__arm {
-  stroke: var(--off);
-  stroke-width: 13;
+.robot__art {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Éteint, le robot est une machine froide : même dessin, couleurs coupées. */
+.robot:not(.is-awake) .robot__art {
+  filter: saturate(0.2) brightness(0.62);
+}
+
+.robot__shell,
+.robot__ear,
+.robot__boot {
+  fill: url(#shell);
+  stroke: var(--outline);
+  stroke-width: 3;
+}
+
+.robot__ear,
+.robot__boot {
+  fill: url(#limb);
+}
+
+.robot__visor {
+  fill: url(#visor);
+  stroke: var(--outline);
+  stroke-width: 3;
+}
+
+.robot__gloss {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0.45;
+}
+
+.robot__faceplate {
+  fill: url(#faceplate);
+  stroke: var(--outline);
+  stroke-width: 3;
+}
+
+.robot__wire,
+.robot__leg {
+  stroke: var(--outline);
   stroke-linecap: round;
 }
 
-.robot.is-awake .robot__arm {
-  stroke: var(--amber);
+.robot__wire {
+  stroke-width: 5;
+}
+
+.robot__leg {
+  stroke: #9a8e7c;
+  stroke-width: 20;
+}
+
+.robot__bulb {
+  fill: var(--orange);
+  stroke: var(--outline);
+  stroke-width: 3;
+}
+
+.robot.is-awake .robot__bulb {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Bras articulés : os, coude, épaule. */
+.arm__bone {
+  stroke: url(#limb);
+  stroke-width: 17;
+  stroke-linecap: round;
+}
+
+.arm__joint {
+  fill: url(#limb);
+  stroke: var(--outline);
+  stroke-width: 3;
 }
 
 /* Yeux dessinés plutôt qu'une émoticône : ça doit avoir l'air d'un robot. */
 .eye {
-  fill: #150f0a;
-  stroke: var(--off);
-  stroke-width: 2.5;
+  fill: #15110c;
+  stroke: var(--outline);
+  stroke-width: 3;
 }
 
-.eye__pupil {
-  fill: var(--off);
+.eye__iris {
+  fill: #4a4038;
 }
 
-.robot.is-awake .eye {
-  fill: #3a2a12;
-  stroke: var(--amber);
+.eye__spark {
+  fill: #fff;
+  opacity: 0.5;
 }
 
-.robot.is-awake .eye__pupil {
-  fill: var(--amber);
+.robot.is-awake .eye__iris {
+  fill: #59c8f0;
+}
+
+.robot.is-awake .eye__spark {
+  opacity: 1;
 }
 
 .eyes,
@@ -216,39 +293,30 @@ body {
 }
 
 .eyes.is-selected .eye,
-.grip.is-selected .grip__palm {
+.grip.is-selected .grip__fist {
   stroke: #fff;
+  stroke-width: 4;
+}
+
+/* Poing : l'outil passe derrière, la tête dépasse au-dessus. */
+.grip__fist {
+  fill: url(#limb);
+  stroke: var(--outline);
   stroke-width: 3;
 }
 
-/* Main : une paume, et un doigt qui se referme par-dessus l'outil. */
-.grip__palm {
-  fill: #4a3a2c;
-  stroke: var(--off);
-  stroke-width: 2.5;
-}
-
-.robot.is-awake .grip__palm {
-  fill: #6b5030;
-  stroke: var(--amber);
-}
-
 .grip__tool {
-  font-size: 25px;
+  font-size: 30px;
 }
 
 .grip__knuckle {
-  stroke: var(--off);
-  stroke-width: 2;
+  stroke: var(--outline);
+  stroke-width: 2.5;
   stroke-linecap: round;
+  opacity: 0.55;
 }
 
-.robot.is-awake .grip__knuckle {
-  stroke: var(--amber);
-  opacity: 0.7;
-}
-
-/* Cerveau posé dans la tête, avec le modèle écrit dessus. */
+/* Cerveau posé dans le dôme, avec le modèle écrit dessus. */
 .brain {
   position: relative;
   display: flex;
@@ -263,16 +331,16 @@ body {
 }
 
 .brain__icon {
-  font-size: 2.6rem;
+  font-size: 2.5rem;
   line-height: 1;
 }
 
 .brain__model {
   position: absolute;
-  bottom: 1px;
+  bottom: 0;
   padding: 1px 6px;
   border-radius: 6px;
-  background: rgba(18, 13, 9, 0.82);
+  background: rgba(18, 13, 9, 0.85);
   color: var(--amber);
   font-size: 0.56rem;
   font-weight: 700;
@@ -282,80 +350,12 @@ body {
 .brain.is-selected {
   outline: 2px solid #fff;
   outline-offset: 2px;
-  border-radius: 12px;
-}
-
-.robot__art {
-  width: 100%;
-  height: 100%;
-}
-
-.robot__shell {
-  fill: #4a3a2c;
-  stroke: var(--off);
-  stroke-width: 2;
-}
-
-.robot__wire {
-  stroke: var(--off);
-  stroke-width: 3;
-}
-
-.robot__bulb,
-.robot__eye {
-  fill: #2c231b;
-  stroke: var(--off);
-  stroke-width: 2;
-}
-
-.robot__mouth {
-  fill: var(--off);
-}
-
-.robot__screen {
-  fill: #191009;
-  stroke: var(--off);
-  stroke-width: 2;
-}
-
-.robot__screen-text {
-  fill: var(--text-dim);
-  font-size: 9.5px;
-  font-family: inherit;
-}
-
-.robot.is-awake .robot__shell {
-  fill: #6b5030;
-  stroke: var(--amber);
-}
-
-.robot.is-awake .robot__wire {
-  stroke: var(--amber);
-}
-
-.robot.is-awake .robot__bulb {
-  fill: var(--orange);
-  stroke: var(--amber);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.robot.is-awake .robot__eye {
-  fill: var(--amber);
-  stroke: var(--amber);
-}
-
-.robot.is-awake .robot__mouth,
-.robot.is-awake .robot__screen-text {
-  fill: var(--amber);
-}
-
-.robot.is-awake .robot__screen {
-  stroke: var(--amber);
+  border-radius: 14px;
 }
 
 @keyframes pulse {
   50% {
-    opacity: 0.35;
+    opacity: 0.4;
   }
 }
 
@@ -417,17 +417,17 @@ body {
 /* Coordonnées en % de la boîte du robot, calées sur le viewBox 300x320. */
 
 .zone--head {
-  left: 36%;
-  top: 9.7%;
-  width: 28%;
-  height: 16.3%;
+  left: 35.6%;
+  top: 14.7%;
+  width: 28.8%;
+  height: 13.5%;
 }
 
 .zone--face {
-  left: 35.3%;
-  top: 27.8%;
-  width: 29.4%;
-  height: 9.4%;
+  left: 35%;
+  top: 29.4%;
+  width: 30%;
+  height: 12.4%;
 }
 
 /* Les yeux sont dessinés dans le SVG : une fois posés, la zone s'efface
@@ -438,19 +438,19 @@ body {
 }
 
 .zone--shoulders {
-  left: 32%;
-  top: 44.4%;
-  width: 36%;
-  height: 8.8%;
+  left: 32.5%;
+  top: 46.5%;
+  width: 35%;
+  height: 7.6%;
   border-color: transparent;
   background: none;
 }
 
 .zone--chest {
-  left: 35.3%;
-  top: 55%;
-  width: 29.4%;
-  height: 15%;
+  left: 39.4%;
+  top: 55.3%;
+  width: 21.3%;
+  height: 14.7%;
   flex-wrap: wrap;
   overflow-y: auto;
 }
