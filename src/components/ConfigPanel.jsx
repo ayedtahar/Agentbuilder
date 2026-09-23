@@ -1,8 +1,8 @@
-export default function ConfigPanel({ item, fields, icon, onChange, onRemove }) {
+export default function ConfigPanel({ item, fields, icon, kind, onChange, onRemove }) {
   if (!item) {
     return (
       <aside className="config config--empty">
-        <p>Clique un objet posé sur le robot pour le régler.</p>
+        <p>Clique une partie du robot pour régler ce qu’elle apporte à l’agent.</p>
       </aside>
     );
   }
@@ -11,7 +11,10 @@ export default function ConfigPanel({ item, fields, icon, onChange, onRemove }) 
     <aside className="config">
       <div className="config__header">
         <span className="config__icon">{icon}</span>
-        <span>{item.label}</span>
+        <span className="config__title">
+          {item.label}
+          <span className="config__kind">{kind}</span>
+        </span>
       </div>
 
       {fields.map((field) => (
@@ -62,6 +65,10 @@ export default function ConfigPanel({ item, fields, icon, onChange, onRemove }) 
       <button type="button" className="config__remove" onClick={onRemove}>
         🗑️ Retirer du robot
       </button>
+
+      <p className="config__note">
+        Retirer cette partie enlève aussi ce qu’elle apporte à l’agent.
+      </p>
     </aside>
   );
 }

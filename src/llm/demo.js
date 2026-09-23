@@ -18,16 +18,16 @@ function composeDemoText({ name, brain, skills, tools, rags }, question) {
   if (question) lines.push(`Tu me demandes : « ${question} ».`);
 
   const posé = [
-    inventory('Skills', skills),
-    inventory('Outils', tools),
-    inventory('Mémoire', rags),
+    inventory('Mes yeux, mes skills', skills),
+    inventory('Mes bras, mes tools', tools),
+    inventory('Mes livres, mon RAG', rags),
   ].filter(Boolean);
 
   if (posé.length > 0) {
     lines.push(`Voici ce que tu m’as posé :\n${posé.map((l) => `• ${l}`).join('\n')}`);
   } else {
     lines.push(
-      'Pour l’instant je n’ai qu’un cerveau : pose-moi des yeux, un marteau ou des livres et ma réponse en tiendra compte.',
+      'Pour l’instant je n’ai qu’un cerveau : pose-moi des yeux (une skill), un bras (un tool) ou des livres (le RAG), et ma réponse en tiendra compte.',
     );
   }
 

@@ -224,7 +224,7 @@ export default function Robot({
             <span className="brain__model">{brain.model}</span>
           </button>
         ) : (
-          <span className="zone__empty">?</span>
+          <span className="zone__empty zone__empty--faint">cerveau · modèle</span>
         )}
       </Zone>
 
@@ -234,7 +234,9 @@ export default function Robot({
         dragSlot={dragSlot}
         filled={skills.length > 0}
       >
-        {skills.length === 0 && <span className="zone__empty zone__empty--faint">yeux</span>}
+        {skills.length === 0 && (
+          <span className="zone__empty zone__empty--faint">yeux · skill</span>
+        )}
       </Zone>
 
       {/* Une épaule de chaque côté reçoit les outils : c'est là que pousse le
@@ -257,7 +259,9 @@ export default function Robot({
         dragSlot={dragSlot}
         filled={rags.length > 0}
       >
-        {rags.length === 0 && <span className="zone__empty zone__empty--faint">RAG</span>}
+        {rags.length === 0 && (
+          <span className="zone__empty zone__empty--faint">livres · RAG</span>
+        )}
         {rags.map((rag) => (
           <button
             key={rag.uid}

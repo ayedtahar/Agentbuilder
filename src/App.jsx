@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { FIELDS, OBJECTS_BY_ID, newItem } from './catalog';
+import { FIELDS, OBJECTS_BY_ID, newItem, pairing } from './catalog';
 import { loadKey, saveKey } from './llm/client';
 import Palette from './components/Palette';
 import ConfigPanel from './components/ConfigPanel';
@@ -107,10 +107,10 @@ export default function App() {
   }, []);
 
   const hint = !brain
-    ? 'Attrape le cerveau et lâche-le dans sa tête.'
+    ? 'Commence par le cerveau : c’est le modèle qui fera tourner l’agent.'
     : tools.length === 0
-      ? 'Pose un outil sur son torse : un bras pousse pour le tenir.'
-      : 'Ajoute des yeux sur son visage, d’autres outils, ou un RAG sur son torse.';
+      ? 'Pose un bras sur son épaule : c’est un tool que l’agent pourra appeler.'
+      : 'Ajoute des yeux (une skill), d’autres bras (des tools), ou des livres sur sa poitrine (le RAG).';
 
   return (
     <div className="app">
@@ -175,6 +175,7 @@ export default function App() {
           item={selected}
           fields={selected ? FIELDS[OBJECTS_BY_ID[selected.objectId].slot] : null}
           icon={selected ? OBJECTS_BY_ID[selected.objectId].icon : null}
+          kind={selected ? pairing(selected.objectId) : null}
           onChange={updateSelected}
           onRemove={removeSelected}
         />
