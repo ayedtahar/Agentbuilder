@@ -1,10 +1,19 @@
 # 🤖 Agent Builder
 
-**Construire un agent IA en habillant un robot.** Au lieu de remplir un
-formulaire, on attrape un cerveau et on le pose dans sa tête, des yeux sur
-son visage, des bras qui empoignent ses tools, des livres sur son torse. La
-silhouette du robot dit d'un coup d'œil ce que l'agent sait faire — puis on
-discute avec lui, ou on exporte sa configuration en JSON.
+**Apprendre à construire un agent IA en jouant.** Pas de tutoriel à suivre,
+pas de formation à enchaîner, pas une ligne de code à écrire : on habille un
+robot, et on repart avec un vrai agent.
+
+Les notions qui font peur de loin — modèle, skill, tool, RAG — deviennent des
+pièces qu'on attrape et qu'on pose. On comprend à quoi sert un tool le jour
+où on en donne un au robot et qu'un bras lui pousse pour le tenir. Le
+vocabulaire technique reste affiché à côté de chaque partie du corps : on
+l'apprend sans l'avoir cherché, et on sait le nommer en sortant.
+
+Ce qu'on assemble n'est pas une maquette : le robot répond, en démonstration
+sans rien configurer, puis avec un vrai modèle dès qu'on lui branche une clé.
+Et sa configuration s'exporte en JSON — la même que celle d'un agent écrit à
+la main.
 
 ![L'interface complète : le robot équipé, la conversation, les réglages](docs/interface.png)
 
@@ -24,8 +33,7 @@ deviner que « des yeux » veut dire « une skill » :
   <img src="docs/mobile.png" alt="La même chose sur téléphone, en onglets" width="200">
 </p>
 
-Le même geste fonctionne à la souris et au doigt, et **le robot répond déjà
-sans aucune configuration** (voir *Parler au robot* plus bas).
+Le même geste fonctionne à la souris et au doigt.
 
 ## Lancer le projet
 
