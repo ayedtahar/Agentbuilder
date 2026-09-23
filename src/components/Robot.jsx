@@ -30,12 +30,14 @@ function armGeometry(index) {
 // Une skill = une paire d'yeux. Plus il y en a, plus elles se resserrent pour
 // tenir sur le visage.
 function eyeGeometry(count) {
-  const spacing = Math.min(46, FACE.width / count);
-  const radius = Math.min(13, spacing / 3.4);
+  const spacing = FACE.width / count;
+  // Une paire occupe 4 rayons plus l'écart : sans cette contrainte, l'œil
+  // intérieur d'une paire chevauchait celui de la paire voisine.
+  const radius = Math.min(13, (spacing - 8) / 4);
   return Array.from({ length: count }, (_, i) => ({
     cx: FACE.cx + (i - (count - 1) / 2) * spacing,
     radius,
-    gap: radius + 4,
+    gap: radius + 3,
   }));
 }
 
