@@ -1,5 +1,11 @@
 # 🤖 Agent Builder
 
+> **English summary.** Agent Builder teaches how an AI agent is put together by letting you
+> dress up a robot: each body part is one piece of the agent (model, skill, tool, RAG). The
+> robot answers in a local demo mode with nothing to configure, then with a real model once
+> you plug in an API key, and its configuration exports as JSON. Today the model and the
+> skills really run; tools and RAG are still decorative. The interface is in French.
+
 **Apprendre à construire un agent IA en jouant.** Pas de tutoriel à suivre,
 pas de formation à enchaîner, pas une ligne de code à écrire : on habille un
 robot, et on repart avec un vrai agent.
